@@ -7,10 +7,11 @@ sources:
     tables:
       - name: Customers  # The name of the source table you want to pull data from
         description: "This table contains customer information."
+  
       - name: Products  # The name of the source table you want to pull data from
         description: "This table contains Products information."
       - name: Orders  # The name of the source table you want to pull data from
         description: "This table contains Products information."
-        
+
       - name: Order_Details  # The name of the source table you want to pull data from
         description: "This table contains Products information."
