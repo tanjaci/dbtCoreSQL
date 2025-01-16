@@ -1,9 +1,10 @@
 with base as (
-select doc.ProductID,
+select 
+doc.ProductID,
        sum(doc.Quantity) as total_units_sold,
        sum(doc.Quantity * doc.UnitPrice * (1 - doc.Discount)) as total_sales_value
- from  {{ source('customer_source', 'Order_Details') }}  doc
-  -- from {{ ref('fact_orders') }} doc
+-- from  {{ source('customer_source', 'Order_Details') }}  doc
+   from {{ ref('fact_orders') }} doc
  group by doc.ProductID
 )
 select * from base
