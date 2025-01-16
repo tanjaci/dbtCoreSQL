@@ -4,7 +4,7 @@ with base as (
      ProductName,
      SupplierID,
      QuantityPerUnit,
-    UnitPrice
+     UnitPrice
     FROM
          {{ source('customer_source', 'Products') }}
 
