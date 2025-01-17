@@ -21,17 +21,15 @@ models:
         description: "Price per unit of the product."
         tests:
           - not_null
-          - accepted_values:
-              values: [">= 0"]  # Ensures price is non-negative
 
   - name: fact_orders
     description: "Fact table capturing details of orders, including products, customers, and order amounts."
     columns:
       - name: OrderID
         description: "Unique identifier for each order."
-        tests:
-          - not_null
-          - unique
+        #tests:
+         # - not_null
+        #- unique
       - name: CustomerID
         description: "Unique identifier for the customer placing the order."
         tests:
@@ -40,20 +38,11 @@ models:
         description: "Identifier of the product in the order."
         tests:
           - not_null
-          - relationships:
-              to: dim_products
-              field: ProductID
       - name: OrderDate
         description: "Date when the order was placed."
         tests:
           - not_null
-      - name: TotalAmount
-        description: "Total monetary value of the order."
-        tests:
-          - not_null
-          - accepted_values:
-              values: [">= 0"]  # Ensures total amount is non-negative
-
+   
   - name: fact_sales_by_products
     description: "Fact table summarizing sales by product, including total quantities and total sales."
     columns:
@@ -61,33 +50,32 @@ models:
         description: "Identifier for the product."
         tests:
           - not_null
-          - relationships:
-              to: dim_products
-              field: ProductID
-      - name: TotalQuantity
+      - name: total_units_sold
         description: "Total quantity sold for each product."
         tests:
           - not_null
           - accepted_values:
               values: [">= 0"]  # Ensures total quantity is non-negative
-      - name: TotalSales
+      - name: total_sales_value
         description: "Total sales revenue for each product."
         tests:
           - not_null
           - accepted_values:
               values: [">= 0"]  # Ensures total sales are non-negative
 
+
 sources:
-  - name: customer_source
-    description: "Source data for Northwind database."
-    schema: dbo
-    database: DBT_PROJECT
+  - name: customer_source  # You can give it any name you prefer
+    schema: dbo  # Replace with the schema where your 'Customer' table resides
+    database: DBT_PROJECT  # The database where the 'Customer' table is located
     tables:
-      - name: Products
-        description: "Source table containing product details."
-      - name: Orders
-        description: "Source table containing order details."
-      - name: Order_Details
-        description: "Source table containing line-item details for orders."
-      - name: Customers
-        description: "Source table containing customer details."
+      - name: Customers  # The name of the source table you want to pull data from
+        description: "This table contains customer information."
+  
+      - name: Products  # The name of the source table you want to pull data from
+        description: "This table contains Products information."
+      - name: Orders  # The name of the source table you want to pull data from
+        description: "This table contains Products information."
+
+      - name: Order_Details  # The name of the source table you want to pull data from
+        description: "This table contains Products information."

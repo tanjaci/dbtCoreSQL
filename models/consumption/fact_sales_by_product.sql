@@ -1,11 +1,20 @@
-with base as (
-select 
-doc.ProductID,
-       sum(doc.Quantity) as total_units_sold,
-       sum(doc.Quantity * doc.UnitPrice * (1 - doc.Discount)) as total_sales_value
--- from  {{ source('customer_source', 'Order_Details') }}  doc
-   from {{ ref('fact_orders') }} doc
- group by doc.ProductID
+
+WITH base AS (
+    {{ 
+        calculate_sales_metrics(
+            source_table=ref('fact_orders'), 
+            product_column='ProductID'
+        )
+    }}
 )
-select * from base
-/*Explanation: This model aggregates sales data by product, calculating the total quantity and total sales for each product from the order_details table*/
+SELECT 
+    * 
+FROM 
+    base
+
+/* 
+Explanation:
+1. The `calculate_sales_metrics` macro encapsulates the aggregation logic.
+2. The model uses the macro to calculate sales metrics, referencing the `fact_orders` table.
+3. The result includes columns: `ProductID`, `total_units_sold`, and `total_sales_value`.
+*/
