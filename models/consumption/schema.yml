@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: dim_products
+    description: "Dimension table for products, containing product details such as name, price, and supplier information."
+    columns:
+      - name: ProductID
+        description: "Unique identifier for each product."
+        tests:
+          - not_null
+          - unique
+      - name: ProductName
+        description: "Name of the product."
+        tests:
+          - not_null
+      - name: SupplierID
+        description: "Identifier for the supplier of the product."
+      - name: QuantityPerUnit
+        description: "Details of the product quantity per unit."
+      - name: UnitPrice
+        description: "Price per unit of the product."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [">= 0"]  # Ensures price is non-negative
+
+  - name: fact_orders
+    description: "Fact table capturing details of orders, including products, customers, and order amounts."
+    columns:
+      - name: OrderID
+        description: "Unique identifier for each order."
+        tests:
+          - not_null
+          - unique
+      - name: CustomerID
+        description: "Unique identifier for the customer placing the order."
+        tests:
+          - not_null
+      - name: ProductID
+        description: "Identifier of the product in the order."
+        tests:
+          - not_null
+          - relationships:
+              to: dim_products
+              field: ProductID
+      - name: OrderDate
+        description: "Date when the order was placed."
+        tests:
+          - not_null
+      - name: TotalAmount
+        description: "Total monetary value of the order."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [">= 0"]  # Ensures total amount is non-negative
+
+  - name: fact_sales_by_products
+    description: "Fact table summarizing sales by product, including total quantities and total sales."
+    columns:
+      - name: ProductID
+        description: "Identifier for the product."
+        tests:
+          - not_null
+          - relationships:
+              to: dim_products
+              field: ProductID
+      - name: TotalQuantity
+        description: "Total quantity sold for each product."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [">= 0"]  # Ensures total quantity is non-negative
+      - name: TotalSales
+        description: "Total sales revenue for each product."
+        tests:
+          - not_null
+          - accepted_values:
+              values: [">= 0"]  # Ensures total sales are non-negative
+
+sources:
+  - name: customer_source
+    description: "Source data for Northwind database."
+    schema: dbo
+    database: DBT_PROJECT
+    tables:
+      - name: Products
+        description: "Source table containing product details."
+      - name: Orders
+        description: "Source table containing order details."
+      - name: Order_Details
+        description: "Source table containing line-item details for orders."
+      - name: Customers
+        description: "Source table containing customer details."
